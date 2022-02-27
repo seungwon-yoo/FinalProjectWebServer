@@ -51,13 +51,23 @@ def get_response_image(image_path):
 
 @app.route('/settings/init', methods=['GET'])
 def initial_settings():
-    path_dir = './dogs'
-    file_list = os.listdir(path_dir)
-    encoded_images = []
-    for element_name in file_list:
-        img_name = path_dir + '/' + element_name
-        encoded_images.append(get_response_image(img_name))
-    return jsonify({'result': encoded_images})
+    categories = ['OUTER', 'DRESS', 'PANTS', 'SKIRT', 'TOP']
+
+    json_data = {
+        'clothes': []
+    }
+    path_dir = './clothes'
+    for category in categories:
+        detail_path_dir = path_dir + '/' + category
+        file_list = os.listdir(detail_path_dir)
+
+        for element_name in file_list:
+            data = {'category': category}
+            img_name = detail_path_dir + '/' + element_name
+            data['result'] = get_response_image(img_name)
+            json_data['clothes'].append(data)
+
+    return jsonify(json_data)
 
 
 @app.route('/')
@@ -66,4 +76,4 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=80)
